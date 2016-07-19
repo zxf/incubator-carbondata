@@ -43,6 +43,7 @@ case class Top(count: Int, topOrBottom: Int, dim: NamedExpression, msr: NamedExp
 object getDB {
 
   def getDatabaseName(dbName: Option[String], sqlContext: SQLContext): String = {
+    val context = sqlContext.asInstanceOf[HiveContext].catalog.client.currentDatabase
     dbName.getOrElse(sqlContext.asInstanceOf[HiveContext].catalog.client.currentDatabase)
   }
 

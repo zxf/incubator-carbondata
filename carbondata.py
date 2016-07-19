@@ -28,11 +28,6 @@ class Env(object):
                 execfile(self.path(self.virtual_env, 'bin', 'activate_this.py'), {}, {
                     '__file__': self.path(self.virtual_env, 'bin', 'activate_this.py')
                 })
-        if not self._modules:
-            self._load('docopt.docopt')
-            self._load('thriftpy')
-            self._load('thriftpy.protocol.binary.TBinaryProtocol')
-            self._load('thriftpy.protocol.json.struct_to_json')
 
     def _load(self, name, alias=None):
         if name.count('.') == 0:
@@ -48,7 +43,15 @@ class Env(object):
         except AttributeError:
             raise ImportError('No module named {0}'.format(parts[-1]))
 
+    def _load_modules(self):
+        if not self._modules:
+            self._load('docopt.docopt')
+            self._load('thriftpy')
+            self._load('thriftpy.protocol.binary.TBinaryProtocol')
+            self._load('thriftpy.protocol.json.struct_to_json')
+
     def module(self, name):
+        self._load_modules()
         try:
             return self._modules[name]
         except KeyError:
@@ -65,12 +68,8 @@ class Env(object):
                     self.virtual_env,
                 ], cwd=self.path())
         self._session()
-        if self._use_virtual:
-            cmd = self.path(self.virtual_env, 'bin', 'pip')
-        else:
-            cmd = 'pip'
         subprocess.call([
-            cmd,
+            'pip',
             'install'
         ] + self.requirements)
 
