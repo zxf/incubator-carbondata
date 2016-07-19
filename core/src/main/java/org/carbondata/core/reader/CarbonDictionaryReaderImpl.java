@@ -131,6 +131,7 @@ public class CarbonDictionaryReaderImpl implements CarbonDictionaryReader {
   @Override public List<byte[]> read(long startOffset, long endOffset) throws IOException {
     List<CarbonDictionaryColumnMetaChunk> carbonDictionaryColumnMetaChunks =
         readDictionaryMetadataFile();
+
     return read(carbonDictionaryColumnMetaChunks, startOffset, endOffset);
   }
 

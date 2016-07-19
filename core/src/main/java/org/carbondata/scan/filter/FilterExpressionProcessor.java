@@ -141,7 +141,7 @@ public class FilterExpressionProcessor implements FilterProcessor {
   /**
    * Selects the blocks based on col max and min value.
    *
-   * @param filterResolver
+   * @param filterExecuter
    * @param listOfDataBlocksToScan
    * @param dataRefNode
    * @param segmentProperties

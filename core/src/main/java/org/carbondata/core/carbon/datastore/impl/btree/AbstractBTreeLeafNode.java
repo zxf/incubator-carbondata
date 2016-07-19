@@ -109,7 +109,7 @@ public abstract class AbstractBTreeLeafNode implements BTreeNode {
    * This method will be used to get the max value of all the columns this can
    * be used in case of filter query
    *
-   * @param max value of all the columns
+   * @return max value of all the columns
    */
   @Override public byte[][] getColumnsMaxValue() {
     return maxKeyOfColumns;
@@ -119,7 +119,7 @@ public abstract class AbstractBTreeLeafNode implements BTreeNode {
    * This method will be used to get the max value of all the columns this can
    * be used in case of filter query
    *
-   * @param max value of all the columns
+   * @return max value of all the columns
    */
   @Override public byte[][] getColumnsMinValue() {
     return minKeyOfColumns;

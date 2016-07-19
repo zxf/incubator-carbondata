@@ -21,10 +21,11 @@ import org.carbondata.core.constants.CarbonCommonConstants
 import org.carbondata.core.util.CarbonProperties
 import org.carbondata.examples.util.InitForExamples
 
+
 object CarbonExample {
   def main(args: Array[String]) {
     val cc = InitForExamples.createCarbonContext("CarbonExample")
-    val testData = InitForExamples.currentPath + "/src/main/resources/data.csv"
+    val testData = InitForExamples.currentPath + "/src/main/resources/data2.csv"
 
     // Specify timestamp format based on raw data
     CarbonProperties.getInstance()
@@ -44,12 +45,12 @@ object CarbonExample {
            """)
 
     cc.sql("""
-           SELECT country, count(salary) AS amount
+           SELECT Country, count(salary), count(id) AS amount
            FROM t3
            WHERE country IN ('china','france')
            GROUP BY country
            """).show()
 
-    cc.sql("DROP TABLE IF EXISTS t3")
+    // cc.sql("DROP TABLE IF EXISTS t3")
   }
 }

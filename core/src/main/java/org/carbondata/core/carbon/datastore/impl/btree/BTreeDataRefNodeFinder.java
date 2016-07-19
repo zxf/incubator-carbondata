@@ -34,7 +34,7 @@ public class BTreeDataRefNodeFinder implements DataRefNodeFinder {
    * no dictionary column value is of variable length so in each column value
    * it will -1
    */
-  private static final int NO_DCITIONARY_COLUMN_VALUE = -1;
+  private static final int NO_DICTIONARY_COLUMN_VALUE = -1;
 
   /**
    * sized of the short value in bytes
@@ -59,7 +59,7 @@ public class BTreeDataRefNodeFinder implements DataRefNodeFinder {
     this.eachColumnValueSize = eachColumnValueSize;
 
     for (int i = 0; i < eachColumnValueSize.length; i++) {
-      if (eachColumnValueSize[i] == -1) {
+      if (eachColumnValueSize[i] == NO_DICTIONARY_COLUMN_VALUE) {
         numberOfNoDictionaryColumns++;
       }
     }
@@ -69,8 +69,8 @@ public class BTreeDataRefNodeFinder implements DataRefNodeFinder {
    * Below method will be used to get the first tentative data block based on
    * search key
    *
-   * @param dataBlocks complete data blocks present
-   * @param serachKey  key to be search
+   * @param dataRefBlock complete data block present
+   * @param searchKey  key to be search
    * @return data block
    */
   @Override public DataRefNode findFirstDataBlock(DataRefNode dataRefBlock, IndexKey searchKey) {
@@ -83,11 +83,11 @@ public class BTreeDataRefNodeFinder implements DataRefNodeFinder {
   }
 
   /**
-   * Below method will be used to get the last data tentative block based on
+   * Below method will be used to get the last tentative data block based on
    * search key
    *
-   * @param dataBlocks complete data blocks present
-   * @param serachKey  key to be search
+   * @param dataRefBlock complete data block present
+   * @param searchKey  key to be search
    * @return data block
    */
   @Override public DataRefNode findLastDataBlock(DataRefNode dataRefBlock, IndexKey searchKey) {
@@ -217,41 +217,41 @@ public class BTreeDataRefNodeFinder implements DataRefNodeFinder {
    */
   private int compareIndexes(IndexKey first, IndexKey second) {
     int dictionaryKeyOffset = 0;
-    int nonDictionaryKeyOffset = 0;
+    int noDictionaryKeyOffset = 0;
     int compareResult = 0;
     int processedNoDictionaryColumn = numberOfNoDictionaryColumns;
     ByteBuffer firstNoDictionaryKeyBuffer = ByteBuffer.wrap(first.getNoDictionaryKeys());
     ByteBuffer secondNoDictionaryKeyBuffer = ByteBuffer.wrap(second.getNoDictionaryKeys());
     int actualOffset = 0;
-    int firstNoDcitionaryLength = 0;
-    int secondNodeDictionaryLength = 0;
+    int firstNoDictionaryLength = 0;
+    int secondNoDictionaryLength = 0;
 
     for (int i = 0; i < eachColumnValueSize.length; i++) {
 
-      if (eachColumnValueSize[i] != NO_DCITIONARY_COLUMN_VALUE) {
+      if (eachColumnValueSize[i] != NO_DICTIONARY_COLUMN_VALUE) {
         compareResult = ByteUtil.UnsafeComparer.INSTANCE
             .compareTo(first.getDictionaryKeys(), dictionaryKeyOffset, eachColumnValueSize[i],
                 second.getDictionaryKeys(), dictionaryKeyOffset, eachColumnValueSize[i]);
         dictionaryKeyOffset += eachColumnValueSize[i];
       } else {
         if (processedNoDictionaryColumn > 1) {
-          actualOffset = firstNoDictionaryKeyBuffer.getShort(nonDictionaryKeyOffset);
-          firstNoDcitionaryLength =
-              firstNoDictionaryKeyBuffer.getShort(nonDictionaryKeyOffset + SHORT_SIZE_IN_BYTES);
-          secondNodeDictionaryLength =
-              secondNoDictionaryKeyBuffer.getShort(nonDictionaryKeyOffset + SHORT_SIZE_IN_BYTES);
+          actualOffset = firstNoDictionaryKeyBuffer.getShort(noDictionaryKeyOffset);
+          firstNoDictionaryLength =
+              firstNoDictionaryKeyBuffer.getShort(noDictionaryKeyOffset + SHORT_SIZE_IN_BYTES);
+          secondNoDictionaryLength =
+              secondNoDictionaryKeyBuffer.getShort(noDictionaryKeyOffset + SHORT_SIZE_IN_BYTES);
           compareResult = ByteUtil.UnsafeComparer.INSTANCE
-              .compareTo(first.getNoDictionaryKeys(), actualOffset, firstNoDcitionaryLength,
-                  second.getNoDictionaryKeys(), actualOffset, secondNodeDictionaryLength);
-          nonDictionaryKeyOffset += SHORT_SIZE_IN_BYTES;
+              .compareTo(first.getNoDictionaryKeys(), actualOffset, firstNoDictionaryLength,
+                  second.getNoDictionaryKeys(), actualOffset, secondNoDictionaryLength);
+          noDictionaryKeyOffset += SHORT_SIZE_IN_BYTES;
           processedNoDictionaryColumn--;
         } else {
-          actualOffset = firstNoDictionaryKeyBuffer.getShort(nonDictionaryKeyOffset);
-          firstNoDcitionaryLength = first.getNoDictionaryKeys().length - actualOffset;
-          secondNodeDictionaryLength = second.getNoDictionaryKeys().length - actualOffset;
+          actualOffset = firstNoDictionaryKeyBuffer.getShort(noDictionaryKeyOffset);
+          firstNoDictionaryLength = first.getNoDictionaryKeys().length - actualOffset;
+          secondNoDictionaryLength = second.getNoDictionaryKeys().length - actualOffset;
           compareResult = ByteUtil.UnsafeComparer.INSTANCE
-              .compareTo(first.getNoDictionaryKeys(), actualOffset, firstNoDcitionaryLength,
-                  second.getNoDictionaryKeys(), actualOffset, secondNodeDictionaryLength);
+              .compareTo(first.getNoDictionaryKeys(), actualOffset, firstNoDictionaryLength,
+                  second.getNoDictionaryKeys(), actualOffset, secondNoDictionaryLength);
         }
       }
       if (compareResult != 0) {

@@ -282,6 +282,8 @@ public class FileStoreSurrogateKeyGenForCSV extends CarbonCSVBasedDimSurrogateKe
       for (int i = 0; i < reverseDictionaries.size(); i++) {
         Dictionary reverseDictionary = (Dictionary) reverseDictionaries.get(i);
         getDictionaryCaches().put(dictionaryKeys.get(i), reverseDictionary);
+        System.out.println(dictionaryKeys.get(i) + ":");
+        System.out.println(reverseDictionary.getDictionaryChunks().getSize());
         updateMaxKeyInfo(dictionaryKeys.get(i), reverseDictionary.getDictionaryChunks().getSize());
       }
     } catch (CarbonUtilException e) {

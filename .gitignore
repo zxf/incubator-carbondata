@@ -7,6 +7,8 @@
 *.iws
 *.pyc
 *.pyo
+.DS_Store
+.env/
 .idea/
 .idea_modules/
 .settings

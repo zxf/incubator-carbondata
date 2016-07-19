@@ -149,6 +149,8 @@ public class SegmentProperties {
   private ColumnGroupModel colGroupModel;
 
   public SegmentProperties(List<ColumnSchema> columnsInTable, int[] columnCardinality) {
+    System.out.println(columnsInTable);
+    System.out.println(columnCardinality);
     dimensions = new ArrayList<CarbonDimension>(CarbonCommonConstants.DEFAULT_COLLECTION_SIZE);
     complexDimensions =
         new ArrayList<CarbonDimension>(CarbonCommonConstants.DEFAULT_COLLECTION_SIZE);
@@ -312,8 +314,8 @@ public class SegmentProperties {
             && !isComplexDimensionStarted && columnSchema.getNumberOfChild() == 0) {
           cardinalityIndexForNormalDimensionColumn.add(tableOrdinal);
           if (columnSchema.isColumnar()) {
-            // if it is a columnar dimension participated in mdkey then added
-            // key ordinal and dimension ordinal
+            // if it is a columnar dimension partici8pated in mdkey then added
+            // key ordinal and dimension ordinal8/5`
             carbonDimension =
                 new CarbonDimension(columnSchema, ++dimensonOrdinal, keyOrdinal++, -1);
           } else {
@@ -384,7 +386,7 @@ public class SegmentProperties {
         new ArrayList<Integer>(CarbonCommonConstants.DEFAULT_COLLECTION_SIZE);
     List<Boolean> isDictionaryColumn =
         new ArrayList<Boolean>(CarbonCommonConstants.DEFAULT_COLLECTION_SIZE);
-    int prvcolumnGroupId = -1;
+    int preColumnGroupId = -1;
     int counter = 0;
     while (counter < dimensions.size()) {
       CarbonDimension carbonDimension = dimensions.get(counter);
@@ -402,7 +404,7 @@ public class SegmentProperties {
       }
       // if in a group then need to add how many columns a selected in
       // group
-      if (!carbonDimension.isColumnar() && carbonDimension.columnGroupId() == prvcolumnGroupId) {
+      if (!carbonDimension.isColumnar() && carbonDimension.columnGroupId() == preColumnGroupId) {
         // incrementing the previous value of the list as it is in same column group
         dimensionPartitionList.set(dimensionPartitionList.size() - 1,
             dimensionPartitionList.get(dimensionPartitionList.size() - 1) + 1);
@@ -410,7 +412,7 @@ public class SegmentProperties {
         dimensionPartitionList.add(1);
         isDictionaryColumn.add(true);
       }
-      prvcolumnGroupId = carbonDimension.columnGroupId();
+      preColumnGroupId = carbonDimension.columnGroupId();
       counter++;
     }
     // get the partitioner
@@ -423,7 +425,7 @@ public class SegmentProperties {
     this.fixedLengthKeySplitter =
         new MultiDimKeyVarLengthVariableSplitGenerator(bitLength, dimensionPartitions);
     // get the size of each value in file block
-    int[] dictionayDimColumnValueSize = fixedLengthKeySplitter.getBlockKeySize();
+    int[] dictionaryDimColumnValueSize = fixedLengthKeySplitter.getBlockKeySize();
     int index = -1;
     this.eachDimColumnValueSize = new int[isDictionaryColumn.size()];
     for (int i = 0; i < eachDimColumnValueSize.length; i++) {
@@ -431,7 +433,7 @@ public class SegmentProperties {
         eachDimColumnValueSize[i] = -1;
         continue;
       }
-      eachDimColumnValueSize[i] = dictionayDimColumnValueSize[++index];
+      eachDimColumnValueSize[i] = dictionaryDimColumnValueSize[++index];
     }
     if (complexDimensions.size() > 0) {
       int[] complexDimesionParition = new int[complexDimensions.size()];

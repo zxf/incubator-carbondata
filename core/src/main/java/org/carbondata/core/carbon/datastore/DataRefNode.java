@@ -55,7 +55,7 @@ public interface DataRefNode {
    * This method will be used to get the max value of all the columns this can
    * be used in case of filter query
    *
-   * @param max value of all the columns
+   * @return max value of all the columns
    */
   byte[][] getColumnsMaxValue();
 
@@ -63,7 +63,7 @@ public interface DataRefNode {
    * This method will be used to get the min value of all the columns this can
    * be used in case of filter query
    *
-   * @param min value of all the columns
+   * @return min value of all the columns
    */
   byte[][] getColumnsMinValue();
 
@@ -80,7 +80,7 @@ public interface DataRefNode {
    * Below method will be used to get the dimension chunk
    *
    * @param fileReader file reader to read the chunk from file
-   * @param blockIndex block index to be read
+   * @param blockIndexes block indexes to be read from file
    * @return dimension data chunk
    */
   DimensionColumnDataChunk getDimensionChunk(FileHolder fileReader, int blockIndexes);
