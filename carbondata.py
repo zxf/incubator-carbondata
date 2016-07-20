@@ -76,8 +76,11 @@ class Env(object):
     def path(self, *args):
         return os.path.join(self._carbondata_root, *args)
 
+    def get_thrift_dir(self):
+        return self.path('format', 'src', 'main', 'thrift')
+
     def get_thrift_path(self, name):
-        return self.path('format', 'src', 'main', 'thrift', '{0}.thrift'.format(name))
+        return os.path.join(self.path('format', 'src', 'main', 'thrift'), '{0}.thrift'.format(name))
 
 
 class DisplayFile(object):
@@ -96,7 +99,8 @@ class ThriftFile(DisplayFile):
 
     def display(self):
         group, cls = self.thrift_struct.split('.')
-        thrift = self._env['thriftpy'].load(self._env.get_thrift_path(group))
+        thrift = self._env['thriftpy'].load(self._env.get_thrift_path(group), 
+            include_dirs=[self._env.get_thrift_dir()])
         data = []
         with open(self._file, 'rb') as fp:
             while True:
@@ -135,7 +139,8 @@ class SortIndexFile(ThriftFile):
 class CarbonIndexFile(DisplayFile):
 
     def display(self):
-        thrift = self._env['thriftpy'].load(self._env.get_thrift_path('carbondataindex'))
+        thrift = self._env['thriftpy'].load(self._env.get_thrift_path('carbondataindex'), 
+            include_dirs=[self._env.get_thrift_dir()])
         data = []
         with open(self._file, 'rb') as fp:
             while True:
