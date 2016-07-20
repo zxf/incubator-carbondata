@@ -5,6 +5,7 @@ import os
 import inspect
 import argparse
 import json
+import pprint
 from struct import unpack
 import subprocess
 
@@ -233,7 +234,11 @@ class Command(object):
             dfile = CarbonIndexFile(env, args['FILE'])
 
         if dfile:
-            print(json.dumps(dfile.display(), indent=2))
+            try:
+                data = dfile.display()
+                print(json.dumps(data, indent=2))
+            except Exception:
+                pprint.pprint(data)
         else:
             print('Illegal file {0}.'.format(args['FILE']))
 
