@@ -142,11 +142,15 @@ class CarbonIndexFile(DisplayFile):
         thrift = self._env['thriftpy'].load(self._env.get_thrift_path('carbondataindex'), 
             include_dirs=[self._env.get_thrift_dir()])
         data = []
+        header = {}
         with open(self._file, 'rb') as fp:
+            struct = getattr(thrift, 'IndexHeader')()
+            struct.read(self._env['TBinaryProtocol'](fp))
+            header.append(self._env['struct_to_json'](struct))
             while True:
                 i = fp.tell()
                 try:
-                    struct = getattr(thrift, 'IndexHeader')()
+                    struct = getattr(thrift, 'BlockIndex')()
                     struct.read(self._env['TBinaryProtocol'](fp))
                     data.append(self._env['struct_to_json'](struct))
                     break
@@ -154,7 +158,10 @@ class CarbonIndexFile(DisplayFile):
                         break
                 except Exception:
                     break
-        return data
+        return {
+            'header': header,
+            'body': data
+        }
 
 
 class TableStatusFile(DisplayFile):
