@@ -178,15 +178,16 @@ class CarbonDataFile(DisplayFile):
             i = len(fp.read())
             fp.seek(-8, os.SEEK_END)
             i = fp.tell()
+            print i
             while i >= 0:
                 fp.seek(i)
                 try:
                     offset = unpack('q', fp.read(8))[0]
-                    print offset
                     fp.seek(offset)
                     struct = getattr(thrift, 'FileFooter')()
                     struct.read(self._env['TBinaryProtocol'](fp))
                     footer = self._env['struct_to_json'](struct)
+                    print offset, i
                     pprint.pprint(footer)
                 except:
                     pass
