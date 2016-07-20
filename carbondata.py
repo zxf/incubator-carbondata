@@ -232,6 +232,8 @@ class Command(object):
             dfile = SortIndexFile(env, args['FILE'])
         elif args['FILE'].endswith('.carbonindex'):
             dfile = CarbonIndexFile(env, args['FILE'])
+        elif args['FILE'].endswith('.carbondata'):
+            dfile = CarbonDataFile(env, args['FILE'])
 
         if dfile:
             try:
