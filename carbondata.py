@@ -90,24 +90,37 @@ class DisplayFile(object):
         raise NotImplementedError()
 
 
-class SchemaFile(DisplayFile):
+class ThriftFile(DisplayFile):
+
+    thrift_struct = '<name>.<class>'
 
     def display(self):
-        thrift = self._env['thriftpy'].load(self._env.get_thrift_path('schema'))
-        schema = thrift.TableInfo()
+        group, cls = self.thrift_struct.split('.')
+        thrift = self._env['thriftpy'].load(self._env.get_thrift_path(group))
+        schema = getattr(thrift, cls)()
         with open(self._file, 'rb') as fp:
             schema.read(self._env['TBinaryProtocol'](fp))
         return self._env['struct_to_json'](schema)
+
+
+class SchemaFile(DisplayFile):
+
+    thrift_struct = 'schema.TableInfo'
 
 
 class DictFile(DisplayFile):
 
-    def display(self):
-        thrift = self._env['thriftpy'].load(self._env.get_thrift_path('dictionary'))
-        schema = thrift.ColumnDictionaryChunk()
-        with open(self._file, 'rb') as fp:
-            schema.read(self._env['TBinaryProtocol'](fp))
-        return self._env['struct_to_json'](schema)
+    thrift_struct = 'dictionary.ColumnDictionaryChunk'
+
+
+class DictMetaFile(DisplayFile):
+
+    thrift_struct = 'dictionary_meta.ColumnDictionaryChunkMeta'
+
+
+class SortIndexFile(DisplayFile):
+
+    thrift_struct = 'sort_index.ColumnSortInfo'
 
 
 class TableStatusFile(DisplayFile):
@@ -136,6 +149,10 @@ class Command(object):
             dfile = TableStatusFile(env, args['FILE'])
         elif args['FILE'].endswith('.dict'):
             dfile = DictFile(env, args['FILE'])
+        elif args['FILE'].endswith('.dictmeta'):
+            dfile = DictMetaFile(env, args['FILE'])
+        elif args['FILE'].endswith('.sortindex'):
+            dfile = SortIndexFile(env, args['FILE'])
 
         if dfile:
             print(json.dumps(dfile.display(), indent=2))
