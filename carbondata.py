@@ -175,15 +175,15 @@ class Command(object):
         """Run carbondata example
 
         Usage:
-            carbondata.py example CLASS [--clean] [--debug]
+            carbondata.py example CLASS [--build] [--debug]
 
         Options:
             -h --help   Display help
-            --clean     clean and install
+            --build     rebuild
             --debug     debug mode
             CLASS       class in org.carbondata.examples
         """
-        if args['--clean']:
+        if args['--build']:
             self.build(env, {})
         executor = 'mvn'
         if args['--debug']:
