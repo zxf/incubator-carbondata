@@ -24,7 +24,7 @@ object ReplExample {
         try {
           cc.sql(input).show()
         } catch {
-          e => println(e)
+          case e => println(e)
         }
       }
     }
