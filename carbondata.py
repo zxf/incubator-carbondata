@@ -100,6 +100,16 @@ class SchemaFile(DisplayFile):
         return self._env['struct_to_json'](schema)
 
 
+class DictFile(DisplayFile):
+
+    def display(self):
+        thrift = self._env['thriftpy'].load(self._env.get_thrift_path('dictionary'))
+        schema = thrift.ColumnDictionaryChunk()
+        with open(self._file, 'rb') as fp:
+            schema.read(self._env['TBinaryProtocol'](fp))
+        return self._env['struct_to_json'](schema)
+
+
 class TableStatusFile(DisplayFile):
 
     def display(self):
@@ -124,6 +134,8 @@ class Command(object):
             dfile = SchemaFile(env, args['FILE'])
         elif args['FILE'].endswith('tablestatus'):
             dfile = TableStatusFile(env, args['FILE'])
+        elif args['FILE'].endswith('.dict'):
+            dfile = DictFile(env, args['FILE'])
 
         if dfile:
             print(json.dumps(dfile.display(), indent=2))
