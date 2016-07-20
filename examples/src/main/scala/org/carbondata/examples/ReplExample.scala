@@ -4,8 +4,6 @@ import org.carbondata.core.constants.CarbonCommonConstants
 import org.carbondata.core.util.CarbonProperties
 import org.carbondata.examples.util.InitForExamples
 
-import scala.tools.nsc.transform.patmat.Logic.PropositionalLogic.True
-
 
 object ReplExample {
   def main(args: Array[String]) {
