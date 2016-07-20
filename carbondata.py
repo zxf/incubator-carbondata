@@ -175,13 +175,23 @@ class CarbonDataFile(DisplayFile):
         data = []
         footer = {}
         with open(self._file, 'rb') as fp:
+            i = len(fp.read())
             fp.seek(-8, os.SEEK_END)
-            offset = unpack('q', fp.read(8))[0]
-            print offset
-            fp.seek(offset)
-            struct = getattr(thrift, 'FileFooter')()
-            struct.read(self._env['TBinaryProtocol'](fp))
-            footer = self._env['struct_to_json'](struct)
+            i = fp.tell()
+            while i >= 0:
+                fp.seek(i)
+                try:
+                    offset = unpack('q', fp.read(8))[0]
+                    print offset
+                    fp.seek(offset)
+                    struct = getattr(thrift, 'FileFooter')()
+                    struct.read(self._env['TBinaryProtocol'](fp))
+                    footer = self._env['struct_to_json'](struct)
+                    pprint.pprint(footer)
+                except:
+                    pass
+                finally:
+                    i -= 1
             return 
             while True:
                 i = fp.tell()
@@ -236,8 +246,8 @@ class Command(object):
             dfile = CarbonDataFile(env, args['FILE'])
 
         if dfile:
+            data = dfile.display()
             try:
-                data = dfile.display()
                 print(json.dumps(data, indent=2))
             except Exception:
                 pprint.pprint(data)
