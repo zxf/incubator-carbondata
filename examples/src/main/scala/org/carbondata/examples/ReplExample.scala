@@ -1,7 +1,6 @@
 /*
- *
+ * test script
  */
-
 
 package org.carbondata.examples
 
@@ -37,3 +36,4 @@ object ReplExample {
 }
 
 // scalastyle:on println
+
