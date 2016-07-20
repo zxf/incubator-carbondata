@@ -103,22 +103,22 @@ class ThriftFile(DisplayFile):
         return self._env['struct_to_json'](schema)
 
 
-class SchemaFile(DisplayFile):
+class SchemaFile(ThriftFile):
 
     thrift_struct = 'schema.TableInfo'
 
 
-class DictFile(DisplayFile):
+class DictFile(ThriftFile):
 
     thrift_struct = 'dictionary.ColumnDictionaryChunk'
 
 
-class DictMetaFile(DisplayFile):
+class DictMetaFile(ThriftFile):
 
     thrift_struct = 'dictionary_meta.ColumnDictionaryChunkMeta'
 
 
-class SortIndexFile(DisplayFile):
+class SortIndexFile(ThriftFile):
 
     thrift_struct = 'sort_index.ColumnSortInfo'
 
