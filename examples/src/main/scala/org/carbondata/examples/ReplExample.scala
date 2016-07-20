@@ -15,7 +15,7 @@ object ReplExample {
     CarbonProperties.getInstance()
       .addProperty(CarbonCommonConstants.CARBON_TIMESTAMP_FORMAT, "yyyy/mm/dd")
 
-    while(True) {
+    while(true) {
       val input = readLine("sql> ")
 
       if (input == "exit") {
