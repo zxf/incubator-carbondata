@@ -149,6 +149,7 @@ class CarbonIndexFile(DisplayFile):
                     struct = getattr(thrift, 'IndexHeader')()
                     struct.read(self._env['TBinaryProtocol'](fp))
                     data.append(self._env['struct_to_json'](struct))
+                    break
                     if fp.tell() == i:
                         break
                 except Exception:
