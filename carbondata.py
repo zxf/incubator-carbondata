@@ -97,10 +97,19 @@ class ThriftFile(DisplayFile):
     def display(self):
         group, cls = self.thrift_struct.split('.')
         thrift = self._env['thriftpy'].load(self._env.get_thrift_path(group))
-        schema = getattr(thrift, cls)()
+        data = []
         with open(self._file, 'rb') as fp:
-            schema.read(self._env['TBinaryProtocol'](fp))
-        return self._env['struct_to_json'](schema)
+            while True:
+                i = fp.tell()
+                try:
+                    struct = getattr(thrift, cls)()
+                    struct.read(self._env['TBinaryProtocol'](fp))
+                    data.append(self._env['struct_to_json'](struct))
+                    if fp.tell() == i:
+                        break
+                except Exception:
+                    break
+        return data
 
 
 class SchemaFile(ThriftFile):
@@ -121,6 +130,25 @@ class DictMetaFile(ThriftFile):
 class SortIndexFile(ThriftFile):
 
     thrift_struct = 'sort_index.ColumnSortInfo'
+
+
+class CarbonIndexFile(DisplayFile):
+
+    def display(self):
+        thrift = self._env['thriftpy'].load(self._env.get_thrift_path('carbondataindex'))
+        data = []
+        with open(self._file, 'rb') as fp:
+            while True:
+                i = fp.tell()
+                try:
+                    struct = getattr(thrift, 'IndexHeader')()
+                    struct.read(self._env['TBinaryProtocol'](fp))
+                    data.append(self._env['struct_to_json'](struct))
+                    if fp.tell() == i:
+                        break
+                except Exception:
+                    break
+        return data
 
 
 class TableStatusFile(DisplayFile):
@@ -153,6 +181,8 @@ class Command(object):
             dfile = DictMetaFile(env, args['FILE'])
         elif args['FILE'].endswith('.sortindex'):
             dfile = SortIndexFile(env, args['FILE'])
+        elif args['FILE'].endswith('.carbonindex'):
+            dfile = CarbonIndexFile(env, args['FILE'])
 
         if dfile:
             print(json.dumps(dfile.display(), indent=2))
