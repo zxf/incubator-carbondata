@@ -146,7 +146,7 @@ class CarbonIndexFile(DisplayFile):
         with open(self._file, 'rb') as fp:
             struct = getattr(thrift, 'IndexHeader')()
             struct.read(self._env['TBinaryProtocol'](fp))
-            header.append(self._env['struct_to_json'](struct))
+            header = self._env['struct_to_json'](struct)
             while True:
                 i = fp.tell()
                 try:
