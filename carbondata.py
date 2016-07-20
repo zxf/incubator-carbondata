@@ -1,9 +1,11 @@
 #!/usr/bin/env python
+#encoding=utf-8
 
 import os
 import inspect
 import argparse
 import json
+from struct import unpack
 import subprocess
 
 
@@ -160,6 +162,39 @@ class CarbonIndexFile(DisplayFile):
                     break
         return {
             'header': header,
+            'body': data
+        }
+
+
+class CarbonDataFile(DisplayFile):
+
+    def display(self):
+        thrift = self._env['thriftpy'].load(self._env.get_thrift_path('carbondata'), 
+            include_dirs=[self._env.get_thrift_dir()])
+        data = []
+        footer = {}
+        with open(self._file, 'rb') as fp:
+            fp.seek(-8, os.SEEK_END)
+            offset = unpack('q', fp.read(8))[0]
+            print offset
+            fp.seek(offset)
+            struct = getattr(thrift, 'FileFooter')()
+            struct.read(self._env['TBinaryProtocol'](fp))
+            footer = self._env['struct_to_json'](struct)
+            return 
+            while True:
+                i = fp.tell()
+                try:
+                    struct = getattr(thrift, 'BlockIndex')()
+                    struct.read(self._env['TBinaryProtocol'](fp))
+                    data.append(self._env['struct_to_json'](struct))
+                    break
+                    if fp.tell() == i:
+                        break
+                except Exception:
+                    break
+        return {
+            'footer': footer,
             'body': data
         }
 
