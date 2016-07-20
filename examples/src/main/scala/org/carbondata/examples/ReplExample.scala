@@ -1,9 +1,15 @@
+/*
+ *
+ */
+
+
 package org.carbondata.examples
 
 import org.carbondata.core.constants.CarbonCommonConstants
 import org.carbondata.core.util.CarbonProperties
 import org.carbondata.examples.util.InitForExamples
 
+// scalastyle:off println
 
 object ReplExample {
   def main(args: Array[String]) {
@@ -29,3 +35,5 @@ object ReplExample {
 
   }
 }
+
+// scalastyle:on println
