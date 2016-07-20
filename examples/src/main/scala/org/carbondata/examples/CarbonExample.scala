@@ -31,7 +31,7 @@ object CarbonExample {
     CarbonProperties.getInstance()
       .addProperty(CarbonCommonConstants.CARBON_TIMESTAMP_FORMAT, "yyyy/mm/dd")
 
-    // cc.sql("CREATE DATABASE x IF NOT EXISTS")
+    // cc.sql("CREATE DATABASE IF NOT EXISTS x")
     // cc.sql("USE x")
     cc.sql("DROP TABLE IF EXISTS t3")
 
