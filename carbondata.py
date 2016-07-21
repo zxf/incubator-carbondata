@@ -102,7 +102,7 @@ class ThriftFile(DisplayFile):
 
     def display(self):
         group, cls = self.thrift_struct.split('.')
-        thrift = self._env['thriftpy'].load(self._env.get_thrift_path(group), 
+        thrift = self._env['thriftpy'].load(self._env.get_thrift_path(group),
             include_dirs=[self._env.get_thrift_dir()])
         data = []
         with open(self._file, 'rb') as fp:
@@ -142,7 +142,7 @@ class SortIndexFile(ThriftFile):
 class CarbonIndexFile(DisplayFile):
 
     def display(self):
-        thrift = self._env['thriftpy'].load(self._env.get_thrift_path('carbondataindex'), 
+        thrift = self._env['thriftpy'].load(self._env.get_thrift_path('carbondataindex'),
             include_dirs=[self._env.get_thrift_dir()])
         data = []
         header = {}
@@ -170,30 +170,19 @@ class CarbonIndexFile(DisplayFile):
 class CarbonDataFile(DisplayFile):
 
     def display(self):
-        thrift = self._env['thriftpy'].load(self._env.get_thrift_path('carbondata'), 
+        thrift = self._env['thriftpy'].load(self._env.get_thrift_path('carbondata'),
             include_dirs=[self._env.get_thrift_dir()])
         data = []
         footer = {}
         with open(self._file, 'rb') as fp:
-            i = len(fp.read())
             fp.seek(-8, os.SEEK_END)
-            i = fp.tell()
-            print i
-            while i >= 0:
-                fp.seek(i)
-                try:
-                    offset = unpack('q', fp.read(8))[0]
-                    fp.seek(offset)
-                    struct = getattr(thrift, 'FileFooter')()
-                    struct.read(self._env['TBinaryProtocol'](fp))
-                    footer = self._env['struct_to_json'](struct)
-                    print offset, i
-                    pprint.pprint(footer)
-                except:
-                    pass
-                finally:
-                    i -= 1
-            return 
+            offset = unpack('>q', fp.read(8))[0]
+            fp.seek(offset)
+            struct = getattr(thrift, 'FileFooter')()
+            struct.read(self._env['TBinaryProtocol'](fp))
+            footer = self._env['struct_to_json'](struct)
+            pprint.pprint([footer, offset])
+            return
             while True:
                 i = fp.tell()
                 try:

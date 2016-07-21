@@ -47,7 +47,7 @@ object CarbonExample {
            """)
 
     cc.sql("""
-           SELECT Country, count(salary), count(id) AS amount
+           SELECT Country, count(salary) AS amount
            FROM t3
            WHERE country IN ('china','france')
            GROUP BY country

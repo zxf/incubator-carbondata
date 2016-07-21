@@ -149,8 +149,6 @@ public class SegmentProperties {
   private ColumnGroupModel colGroupModel;
 
   public SegmentProperties(List<ColumnSchema> columnsInTable, int[] columnCardinality) {
-    System.out.println(columnsInTable);
-    System.out.println(columnCardinality);
     dimensions = new ArrayList<CarbonDimension>(CarbonCommonConstants.DEFAULT_COLLECTION_SIZE);
     complexDimensions =
         new ArrayList<CarbonDimension>(CarbonCommonConstants.DEFAULT_COLLECTION_SIZE);
